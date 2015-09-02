@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block container %}
+    {% if action == 'DETAIL' %}
+        <div class="jumbotron">
+            {% if username == request.user.username %}
+                <h1>Hello {{ profile|title }}!</h1>
+            {% else %}
+                <h2>Welcome to {{ profile|title }} profile!</h2>
+            {% endif %}
+            <div class="avatar">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="{{ profile|title }} photo">
+                {% else %}
+                    <img src="{{ url_for('static', filename='profiles/profiles/img/avatars/001.jpg') }}" alt="{{ profile|title }} photo">
+                {% endif %}
+            </div>
+            <blockquote>
+                {% if profile.motivation_quote %}
+                    {{ profile.motivation_quote }}
+                {% else %}
+                    Do your best!
+                {% endif %}
+            </blockquote>
+        </div>
+        <div class="row placeholders">
+            {% if boards %}
+                {% for board in boards %}
+                    <div class="col-xs-3 col-sm-2 placeholder">
+                        <div class="board-thumbnail">
+                            <h4> {{ board.title|title }}</h4>
+                            {% if short_urls_allowed %}
+                                <a class="circle img-responsive" href="#">#{{ board.sequence }}</a>
+                            {% else %}
+                                <a class="circle img-responsive" href="#">#{{ board.sequence }}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-content">
+                    <h4>You have not created boards yet. You can do it right now clicking on button below.</h4>
+                    <a class="btn btn-primary btn-lg" href="#" role="button">Add board</a>
+                </div>
+            {% endif %}
+        </div>
+    {% elif action == 'UPDATE' or action == 'CREATE' %}
+        <div class="col-md-6 col-md-offset-3">
+            <form id="profile-form" action="?" enctype="multipart/form-data" role="form" method="post">
+                <div class="form-group">
+                    <h4>User data</h4>
+                    {{ form }}
+                </div>
+            </form>
+        </div>
+    {% endif %}
+{% endblock container %}
+
+{% block footer %}
+    <footer>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                {% if action == 'DETAIL' %}
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="#">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new board
+                        </a>
+                        <a class="btn btn-default" href="#">
+                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                            My Friends
+                        </a>
+                        <a class="btn btn-default" href="#">
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                            Update profile
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default" href="#">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new board
+                        </a>
+                        <a class="btn btn-default" href="#">
+                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                            {{ username|title }} Friends
+                        </a>
+                    {% endif %}
+                {% elif action == 'UPDATE' %}
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="#">
+                    {% else %}
+                        <a class="btn btn-default" href="#">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Cancel
+                        </a>
+                    <button form="profile-form" class="btn btn-default">
+                        Save profile
+                    </button>
+                {% elif action == 'CREATE' %}
+                    <button form="profile-form" class="btn btn-default">
+                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                        Create profile
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </footer>
+{% endblock footer %}

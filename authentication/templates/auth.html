@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block container %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 login">
+                <div class="border">
+                    {% if form %}
+                        <div class="alert-box">
+                            {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                <div class="alert alert-danger">
+                                    <a class="close" data-dismiss="alert">×</a>
+                                    <ul>
+                                        {% for message in messages %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                        {{ wtf.quick_form(form, id="auth-form", button_map={'submit': 'primary pull-right'}) }}
+                    {% elif request.url_rule.endpoint == 'bp_authentication.reset-done' %}
+                        <div class="auth-message">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h4>Password reset</h4>
+                                    <p>Password reset successfully.</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <a class="btn btn-default pull-right" href="#">
+                                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                                        Go to profile page
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif request.url_rule.endpoint == 'bp_authentication.password-reset-done' %}
+                        <div class="auth-message">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h4>Password reset</h4>
+                                    <p>We've emailed you instructions for setting your password, if an account exists with the email you entered. You should receive them shortly.</p>
+                                    <p>If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder.</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <a class="btn btn-default pull-right" href="#">
+                                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                                        Go to profile page
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock container %}
