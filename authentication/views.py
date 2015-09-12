@@ -18,6 +18,8 @@ from authentication.mixins import (
 )
 from beattime.config import db
 from beattime.email import send_email
+from beattime.utils import is_allowed_file_format, handle_avatar
+from boards.models import Desk
 from profiles.models import Profile
 
 LOGIN_PAGE = 'bp_authentication.login'
@@ -76,6 +78,15 @@ class RegistrationView(FormMixin, MethodView):
     form_class = RegistrationForm
     exclude_fields = ['friends']
 
+    def _handle_avatar(self, user):
+        """
+        Append avatar if uploaded.
+        """
+        _file = request.files['avatar']
+        if _file and is_allowed_file_format(_file.filename):
+            filename = handle_avatar(_file, user)
+            user.avatar = filename
+
     def _create_user(self, form):
         """
         Create user basing on form's data.
@@ -85,10 +96,15 @@ class RegistrationView(FormMixin, MethodView):
             username=form.username.data,
             password=form.password.data,
             display_name=form.display_name.data,
-            avatar=form.avatar.data,
             motivation_quote=form.motivation_quote.data,
         )
         db.session.add(user)
+        self._handle_avatar(user)
+        db.session.commit()
+        desk = Desk(
+            author=user.id, owner_id=user.id, desk_slug=user.username[:5]
+        )
+        db.session.add(desk)
         db.session.commit()
 
     def post(self):
