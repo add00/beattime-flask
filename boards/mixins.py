@@ -8,10 +8,9 @@ from sqlalchemy import and_
 from authentication.mixins import LoginRequiredMixin
 from beattime.config import db
 from beattime.mixins import ViewMixin
-from boards.forms import BoardForm, CommentForm, SprintForm,
+from boards.forms import BoardForm, CommentForm, SprintForm
 from boards.models import (
     Board, Comment, Desk, Sprint, Sticker,
-    BOARD_TYPE, SPRINT_TYPE, STICKER_TYPE,
 )
 
 

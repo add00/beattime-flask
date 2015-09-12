@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
-from datetime import datetime
-
-from flask import current_app, redirect, request, url_for
+from flask import redirect, request, url_for
 from flask.ext.login import current_user
 from flask.views import View
 from sqlalchemy.exc import IntegrityError
 
 from authentication.forms import RegistrationForm
 from beattime.config import db
-from beattime.utils import is_allowed_file_format
+from beattime.utils import handle_avatar, is_allowed_file_format
 from boards import CREATE, DETAIL, LIST, OPEN, UPDATE
 from boards.forms import StickerForm
 from boards.mixins import (
@@ -51,13 +48,7 @@ class ProfileUpdate(ProfileMixin, View):
 
         _file = request.files['avatar']
         if _file and is_allowed_file_format(_file.filename):
-            filename = '{}_{}.{}'.format(
-                profile.username, datetime.now(),
-                _file.filename.split('.', 1)[-1]
-            )
-            _file.save(
-                os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            )
+            filename = handle_avatar(_file, profile)
             profile.avatar = filename
 
         profile.display_name = form.display_name.data
@@ -114,7 +105,6 @@ class BoardDetail(BoardMixin, View):
         Return query of stickers that belong to desk of user sending a request.
         """
         board = self.get_object()
-
         return Sticker.query.filter_by(board_id=board.id, sprint_id=None).all()
 
     def context_data(self):
