@@ -10,8 +10,15 @@ from authentication import bp_authentication
 from authentication.views import *
 from authentication.urls import *
 from beattime.config import config, db, auth_manager, email, bootstrap
-from boards import bp_api, bp_board, bp_profile, bp_sprint, bp_sticker
+from boards import (
+    bp_api,
+    bp_board, bp_board_user,
+    bp_profile, bp_profile_user,
+    bp_sprint, bp_sprint_user,
+    bp_sticker, bp_sticker_user,
+)
 from boards.views import *
+from boards.urls import *
 
 beattime = Blueprint(
     'beattime', __name__, static_url_path='/static/beattime',
@@ -31,8 +38,16 @@ def create_app(name):
     app.register_blueprint(bp_authentication)
     app.register_blueprint(bp_api, url_prefix='/api')
     app.register_blueprint(bp_board, url_prefix='/board')
+    app.register_blueprint(bp_board_user, url_prefix='/user/<username>/board')
+    app.register_blueprint(bp_sprint, url_prefix='/board/<sequence>/sprint')
+    app.register_blueprint(
+        bp_sprint_user, url_prefix='/user/<username>/board/<sequence>/sprint'
+    )
     app.register_blueprint(bp_profile)
-    app.register_blueprint(bp_sprint, url_prefix='/sprint')
+    app.register_blueprint(bp_profile_user, url_prefix='/user/<username>')
     app.register_blueprint(bp_sticker, url_prefix='/sticker')
+    app.register_blueprint(
+        bp_sticker_user, url_prefix='/user/<username>/sticker'
+    )
 
     return app

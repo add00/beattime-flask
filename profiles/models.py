@@ -7,7 +7,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from beattime.config import db, auth_manager
 from beattime.fields import Column
-from beattime.mixins import PKMixin
 
 
 friends = db.Table(
@@ -21,6 +20,12 @@ friends = db.Table(
         primary_key=True
     )
 )
+
+
+class PKMixin(db.Model):
+    __abstract__ = True
+
+    id = db.Column(db.Integer, primary_key=True)
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -61,17 +66,24 @@ class Profile(UserMixin, PKMixin):
     # user = models.OneToOneField(User, verbose_name=_('user'))
 
     comments = db.relationship('Comment', backref='profile')
-    desk = db.relationship(
-        'Desk', uselist=False, backref='profile', foreign_keys='Desk.owner_id'
+    desk_author = db.relationship(
+        'Desk', uselist=False, backref='desk_author',
+        foreign_keys='Desk.author'
     )
-    boards = db.relationship('Board', backref='profile')
-    sprints = db.relationship('Sprint', backref='profile')
-    stickers = db.relationship('Sticker', backref='profile')
-
-    activities = db.relationship('Activities', backref='profile')
+    desk_owner = db.relationship(
+        'Desk', uselist=False, backref='desk_owner',
+        foreign_keys='Desk.owner_id'
+    )
+    board_set = db.relationship('Board', backref='board_author')
+    sprint_set = db.relationship('Sprint', backref='sprint_author')
+    sticker_set = db.relationship('Sticker', backref='sticker_author')
+    activity_set = db.relationship('Activities', backref='activity_who')
 
     def __repr__(self):
         return '<Profile {}>'.format(self.display_name)
+
+    def __str__(self):
+        return '{}'.format(self.display_name)
 
     @property
     def password(self):
@@ -131,7 +143,7 @@ class ActivityType(PKMixin):
     description = Column(db.String(256), nullable=True)
     name = Column(db.String(100))
 
-    activities = db.relationship('Activities', backref='activity_type')
+    activity_set = db.relationship('Activities', backref='activity_type')
 
     def __repr__(self):
         return '<ActivityType {}>'.format(self.name)

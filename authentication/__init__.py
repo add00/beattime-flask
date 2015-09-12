@@ -4,4 +4,4 @@ bp_authentication = Blueprint(
     'bp_authentication', __name__, template_folder='templates'
 )
 
-DEFAULT_PAGE = 'bp_profile.profiledetail'
+DEFAULT_PAGE = 'bp_profile.profile-detail'

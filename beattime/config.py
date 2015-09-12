@@ -22,6 +22,9 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     TOKEN_EXPIRATION = 3600
     MAIL_SENDER = 'test@test.com'
+    DEFAULT_PAGE = 'bp_profile.profile-detail'
+    UPLOAD_FOLDER = 'beattime/static/beattime/img/avatars'
+    ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 
 class DevConfig(Config):

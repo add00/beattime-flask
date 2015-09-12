@@ -10,12 +10,15 @@ BP_KWARGS = {
     'static_url_path': '/static/boards',
     'static_folder': os.path.join('static', 'boards')
 }
-bp_sprint = Blueprint('bp_sprint', __name__, )
-bp_board = Blueprint('bp_board', __name__, **BP_KWARGS)
-bp_sticker = Blueprint('bp_sticker', __name__, **BP_KWARGS)
-bp_profile = Blueprint('bp_profile', __name__, **BP_KWARGS)
 bp_api = Blueprint('bp_api', __name__, **BP_KWARGS)
-
+bp_board = Blueprint('bp_board', __name__, **BP_KWARGS)
+bp_board_user = Blueprint('bp_board_user', __name__, **BP_KWARGS)
+bp_profile = Blueprint('bp_profile', __name__, **BP_KWARGS)
+bp_profile_user = Blueprint('bp_profile_user', __name__, **BP_KWARGS)
+bp_sprint = Blueprint('bp_sprint', __name__, **BP_KWARGS)
+bp_sprint_user = Blueprint('bp_sprint_user', __name__, **BP_KWARGS)
+bp_sticker = Blueprint('bp_sticker', __name__, **BP_KWARGS)
+bp_sticker_user = Blueprint('bp_sticker_user', __name__, **BP_KWARGS)
 
 OPEN = 'OPEN'
 IN_PROGRESS = 'PROGRESS'
@@ -44,9 +47,9 @@ ACTION = (
 )
 
 CSS_CLASS = (
-    ('bg-todo', OPEN),
-    ('bg-inprogress', IN_PROGRESS),
-    ('bg-inreview', IN_REVIEW),
-    ('bg-done', DONE),
-    ('bg-blocked', BLOCKED)
+    (OPEN, 'bg-todo'),
+    (IN_PROGRESS, 'bg-inprogress'),
+    (IN_REVIEW, 'bg-inreview'),
+    (DONE, 'bg-done'),
+    (BLOCKED, 'bg-blocked')
 )

@@ -1,17 +1,21 @@
 """empty message
 
-Revision ID: 18a61c0c44b2
+Revision ID: 3c8ba3f966a0
 Revises: None
-Create Date: 2015-08-31 23:38:25.767977
+Create Date: 2015-09-07 20:38:05.312284
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '18a61c0c44b2'
+revision = '3c8ba3f966a0'
 down_revision = None
 
 from alembic import op
+import sqlalchemy_utils
 import sqlalchemy as sa
+
+from boards import CSS_CLASS, TASK_STATUS
+from boards.models import OBJECT_TYPE
 
 
 def upgrade():
@@ -25,6 +29,8 @@ def upgrade():
     op.create_table('labels',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('color', sa.String(length=7), nullable=False),
+    sa.Column('css_class', sqlalchemy_utils.types.choice.ChoiceType(CSS_CLASS), nullable=True),
+    sa.Column('status', sqlalchemy_utils.types.choice.ChoiceType(TASK_STATUS), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('profiles',
@@ -34,7 +40,7 @@ def upgrade():
     sa.Column('passwd', sa.String(length=128), nullable=True),
     sa.Column('avatar', sa.String(length=256), nullable=False),
     sa.Column('display_name', sa.String(length=128), nullable=False),
-    sa.Column('motivation_quote', sa.String(length=256), nullable=False),
+    sa.Column('motivation_quote', sa.String(length=256), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_profiles_email'), 'profiles', ['email'], unique=True)
@@ -52,9 +58,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('creation_date', sa.DateTime(), nullable=False),
     sa.Column('modification_date', sa.DateTime(), nullable=False),
-    sa.Column('text', sa.Text(), nullable=False),
+    sa.Column('text', sa.Text(), nullable=True),
     sa.Column('object_id', sa.Integer(), nullable=False),
-    sa.Column('object_type', sa.Unicode(length=255), nullable=False),
+    sa.Column('object_type', sqlalchemy_utils.types.choice.ChoiceType(OBJECT_TYPE), nullable=True),
     sa.Column('author', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['author'], ['profiles.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -99,7 +105,7 @@ def upgrade():
     sa.Column('creation_date', sa.DateTime(), nullable=False),
     sa.Column('modification_date', sa.DateTime(), nullable=False),
     sa.Column('board_id', sa.Integer(), nullable=False),
-    sa.Column('number', sa.DECIMAL(precision=2), nullable=False),
+    sa.Column('number', sa.String(length=100), nullable=False),
     sa.Column('start_date', sa.DateTime(), nullable=False),
     sa.Column('end_date', sa.DateTime(), nullable=False),
     sa.Column('author', sa.Integer(), nullable=False),

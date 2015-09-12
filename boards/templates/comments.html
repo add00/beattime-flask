@@ -1,0 +1,61 @@
+<h4>Comments</h4>
+<div>
+    <form id="comment-form" action="?" role="form" method="post">
+        <div class="form-group">
+            {{ form.csrf_token }}
+            {% for field in form if field.id != 'csrf_token' %}
+                <div class="form-group">
+                    {{ field(class='form-control') }}
+                </div>
+            {% endfor %}
+            <button class="btn btn-default pull-right">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                Add comment
+            </button>
+        </div>
+    </form>
+</div>
+<div>
+    {% if comments %}
+        {% for comment in comments %}
+        <div class="comment">
+            <p class="well well-sm">{{ comment.text }}</p>
+            <ul class="author">
+                <li><h6>@<strong>{{ comment.author }}</strong></h6></li>
+                <li>{{ comment.creation_date }}</li>
+            </ul>
+        </div>
+        {% endfor %}
+        {% if next_page or prev_page %}
+            <nav>
+                <ul class="pagination">
+                    {% if prev_page %}
+                        <li>
+                            <a href="?page={{ prev_page }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="disabled"><span aria-hidden="true">&laquo;</span></li>
+                    {% endif %}
+                    {% for number in pages_num %}
+                        <li {% if number == page_num  %} class="active" {% endif %}>
+                            <a href="?page={{ number }}">{{ number }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if next_page %}
+                        <li>
+                            <a href="?page={{ next_page }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="disabled"><span aria-hidden="true">&raquo;</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="well well-sm">This {% if board %}board{% else %}sticker{% endif %} has not been commented yet. Please, use form above to <strong>add first one.</strong></div>
+    {% endif %}
+</div>
