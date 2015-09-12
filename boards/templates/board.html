@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block container %}
+    {% if action == 'DETAIL' %}
+        <h4>Backlog</h4>
+        <div class="row">
+            {% if stickers %}
+                {% for sticker in stickers %}
+                    <div class="col-md-15 col-sm-3">
+                        <div class="sticker">
+                            <div class="border {{ sticker.label.css_class }}">
+                                <div class="sticker-header">
+                                    <h5>
+                                        {% if short_urls_allowed %}
+                                            <a href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sequence) }}">
+                                        {% else %}
+                                            <a href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sequence, username=user.username) }}">
+                                        {% endif %}
+                                                {{ sticker.caption }}
+                                            </a>
+                                    </h5>
+                                    <div class="sticker-label smaller">
+                                        <span class="label {{ sticker.label.css_class }}">{{ sticker.label.status }}</span>
+                                    </div>
+                                </div>
+                                <div class="sticker-content">
+                                    <div class="sticker-description">
+                                        <p>
+                                            {{ sticker.description }}
+                                        </p>
+                                        <a href="#"></a>
+                                    </div>
+                                </div>
+                                <div class="sticker-actions">
+                                    <div>
+                                        {% if short_urls_allowed %}
+                                            <a class="sticker-number label bg-number" href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sequence) }}">{{ sticker.number }}</a>
+                                        {% else %}
+                                            <a class="sticker-number label bg-number" href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sequence, username=user.username) }}">{{ sticker.number }}</a>
+                                        {% endif %}
+                                        {% if sticker.count_comments %}
+                                            {% if short_urls_allowed %}
+                                                <a href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sequence) }}">
+                                            {% else %}
+                                                <a href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sequence, username=user.username) }}">
+                                            {% endif %}
+                                                    <span class="glyphicon glyphicon-comment"></span> {{ sticker.count_comments }}
+                                                </a>
+                                        {% else %}
+                                            {% if short_urls_allowed %}
+                                                <a href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sequence) }}">
+                                            {% else %}
+                                                <a href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sequence, username=user.username) }}">
+                                            {% endif %}
+                                                    <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Add a first comment
+                                                </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="sticker">
+                    <div class="border col-md-6 col-md-offset-3">
+                        <div class="sticker-empty">
+                            You have no sticker in backlog. Let's use action buttons below.
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% if sprints %}
+            {% for sprint in sprints %}
+                <h4>
+                    {% if short_urls_allowed %}
+                        <a href="{{ url_for('bp_sprint.sprint-detail', sequence=sequence, number=number) }}">Sprint {{ sprint.number }}</a>
+                    {% else %}
+                        <a href="{{ url_for('bp_sprint_user.sprint-detail', sequence=sequence, number=number, username=user.username) }}">Sprint {{ sprint.number }}</a>
+                    {% endif %}
+                </h4>
+                <div class="row">
+                    {% if sprint.sticker_set %}
+                        {% for sticker in sprint.sticker_set %}
+                            <div class="col-md-15 col-sm-3">
+                                <div class="sticker">
+                                    <div class="border {{ sticker.label.css_class }}">
+                                        <div class="sticker-header">
+                                            <h5>
+                                                {% if short_urls_allowed %}
+                                                    <a href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence) }}">
+                                                {% else %}
+                                                    <a href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence, username=user.username) }}">
+                                                {% endif %}
+                                                        {{ sticker.caption }}
+                                                    </a>
+                                            </h5>
+                                            <div class="sticker-label smaller">
+                                                <span class="label {{ sticker.label.css_class }}">{{ sticker.label.status }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="sticker-content">
+                                            <div class="sticker-description">
+                                                <p>
+                                                    {{ sticker.description }}
+                                                </p>
+                                                <a href="#"></a>
+                                            </div>
+                                        </div>
+                                        <div class="sticker-actions">
+                                            <div>
+                                                {% if short_urls_allowed %}
+                                                    <a class="sticker-number label bg-number" href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence) }}">{{ sticker.number }}</a>
+                                                {% else %}
+                                                    <a class="sticker-number label bg-number" href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence, username=user.username) }}">{{ sticker.number }}</a>
+                                                {% endif %}
+                                                {% if sticker.count_comments %}
+                                                    {% if short_urls_allowed %}
+                                                        <a href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence) }}">
+                                                    {% else %}
+                                                        <a href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence, username=user.username) }}">
+                                                    {% endif %}
+                                                            <span class="glyphicon glyphicon-comment"></span> {{ sticker.count_comments }}
+                                                        </a>
+                                                {% else %}
+                                                    {% if short_urls_allowed %}
+                                                        <a href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence) }}">
+                                                    {% else %}
+                                                        <a href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence, username=user.username) }}">
+                                                    {% endif %}
+                                                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Add a first comment
+                                                        </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="sticker">
+                            <div class="border col-md-6 col-md-offset-3">
+                                <div class="sticker-empty">
+                                    You have no sticker created in sprint #{{ sprint.number }}. Let's use action buttons below.
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% elif action == 'CREATE' %}
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 login">
+                <div class="border">
+                    <form action="?next={{next}}" role="form" method="post">
+                        <div class="form-group">
+                            <h4>User data</h4>
+                            {{ form.csrf_token }}
+                            {% for field in form if field.id != 'csrf_token' %}
+                                {% if field.type == 'SubmitField' %}
+                                    {{ field(class='pull-right btn btn-primary') }}
+                                {% elif field.widget.input_type == 'hidden' %}
+                                    {{ field }}
+                                {% else %}
+                                    <div class="form-group">
+                                        {{ field.label }}
+                                        {{ field(class='form-control') }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="pull-right btn btn-primary">Create board</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 sticker preview">
+                <div class="border">
+                    <div class="sticker-actions preview">
+                        {% include 'comments.html' %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    {% endif %}
+{% endblock container %}
+
+{% block footer %}
+    {% if action %}
+        <footer {% if action == 'DETAIL' and sprints %}class="board"{% endif %}>
+        {% if action == 'DETAIL' %}
+            {% if sprints %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-15 col-sm-3">
+                        <h4>Sprints</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    {% for sprint in sprints %}
+                        <div class="col-xs-3 col-sm-2 placeholder">
+                            <div class="board-thumbnail">
+                                {% if short_urls_allowed %}
+                                    <a class="circle img-responsive {% if is_current %}done{% endif %}" href="{{ url_for('bp_sprint.sprint-detail', sequence=sequence, number=sprint.number) }}">#{{ sprint.number }}</a>
+                                {% else %}
+                                    <a class="circle img-responsive {% if is_current %}done{% endif %}" href="{{ url_for('bp_sprint.sprint-detail', sequence=sequence, number=sprint.number, username=user.username) }}">#{{ sprint.number }}</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{{ url_for('bp_profile.profile-detail') }}">
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to profile page
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('bp_sprint.sprint-create', sequence=sequence) }}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new sprint
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('bp_sticker.sticker-create-board', sequence=sequence) }}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new sticker
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('bp_board.board-comments', sequence=sequence) }}">
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                            Comments {% if board.count_comments %}(<strong>{{ board.count_comments }}</strong>){% endif %}
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default" href="{{ url_for('bp_profile_user.profile-detail', username=user.username) }}">
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to profile page
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('bp_sprint_user.sprint-create', sequence=sequence, username=user.username) }}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new sprint
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('bp_sticker_user.sticker-create-board', sequence=sequence, username=user.username) }}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new sticker
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('bp_board_user.board-comments', sequence=sequence, username=user.username) }}">
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                            Comments {% if board.count_comments %}(<strong>{{ board.count_comments }}</strong>){% endif %}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% elif action == 'CREATE' %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{{ url_for('bp_profile.profile-detail') }}">
+                    {% else %}
+                        <a class="btn btn-default" href="{{ url_for('bp_profile_user.profile-detail', username=user.username) }}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to profile page
+                        </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{{ url_for('bp_board.board-detail', sequence=sequence) }}">
+                    {% else %}
+                        <a class="btn btn-default" href="{{ url_for('bp_board_user.board-detail', sequence=sequence) }}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to board #{{ board.sequence }}
+                        </a>
+                </div>
+            </div>
+        {% endif %}
+        </footer>
+    {% endif %}
+{% endblock footer %}

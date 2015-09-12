@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block nav %}
+    {{ super() }}
+    {% if action == 'DETAIL' %}
+        <div class="labels container-fluid">
+            <div class="row">
+                <div id="nav-todo" class="bg-todo col-md-15 col-sm-3">
+                    <p>TO DO</p>
+                    {% if short_urls_allowed %}
+                        <a class="nav-action glyphicon glyphicon-plus" href="{{ url_for('bp_sticker.sticker-create-sprint', number=number, sequence=sequence) }}"></a>
+                    {% else %}
+                        <a class="nav-action glyphicon glyphicon-plus" href="{{ url_for('bp_sticker_user.sticker-create-sprint', number=number, sequence=sequence, username=user.username) }}"></a>
+                    {% endif %}
+                </div>
+                <div id="nav-inprogress" class="bg-inprogress col-md-15 col-sm-3">
+                    <p>IN PROGRESS</p>
+                </div>
+                <div id="nav-inreview" class="bg-inreview col-md-15 col-sm-3">
+                    <p>IN REVIEW</p>
+                </div>
+                <div id="nav-done" class="bg-done col-md-15 col-sm-3">
+                    <p>DONE</p>
+                </div>
+                <div id="nav-blocked" class="bg-blocked col-md-15 col-sm-3">
+                    <p>BLOCKED</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock nav %}
+
+{% block container %}
+    {% if action == 'DETAIL' %}
+        <div class="row">
+            <div id="todo" class="col-md-15 col-sm-3">
+                {% if sprint.open %}
+                    {% for sticker in sprint.open %}
+                        {% include 'stickers_column.html' %}
+                    {% endfor %}
+                {% else %}
+                    <div class="sticker">
+                        <div class="border bg-todo">
+                            <div class="sticker-empty">
+                                You have no sticker in <span class="label bg-todo">OPEN</span> state
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div id="inprogress" class="col-md-15 col-sm-3">
+                {% if sprint.in_progress %}
+                    {% for sticker in sprint.in_progress %}
+                        {% include 'stickers_column.html' %}
+                    {% endfor %}
+                {% else %}
+                    <div class="sticker">
+                        <div class="border bg-inprogress">
+                            <div class="sticker-empty">
+                                No sticker <span class="label bg-inprogress">IN PROGRESS</span> right now
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div id="inreview" class="col-md-15 col-sm-3">
+                {% if sprint.in_review %}
+                    {% for sticker in sprint.in_review %}
+                        {% include 'stickers_column.html' %}
+                    {% endfor %}
+                {% else %}
+                    <div class="sticker">
+                        <div class="border bg-inreview">
+                            <div class="sticker-empty">
+                                No sticker <span class="label bg-inreview">IN REVIEW</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div id="done" class="col-md-15 col-sm-3">
+                {% if sprint.done %}
+                    {% for sticker in sprint.done %}
+                        {% include 'stickers_column.html' %}
+                    {% endfor %}
+                {% else %}
+                    <div class="sticker">
+                        <div class="border bg-done">
+                            <div class="sticker-empty">
+                                You have no sticker <span class="label bg-done">DONE</span> yet
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div id="done" class="col-md-15 col-sm-3">
+                {% if sprint.blocked %}
+                    {% for sticker in sprint.blocked %}
+                        {% include 'stickers_column.html' %}
+                    {% endfor %}
+                {% else %}
+                    <div class="sticker">
+                        <div class="border bg-blocked">
+                            <div class="sticker-empty">
+                                You have no <span class="label bg-blocked">BLOCKED</span> sticker
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% elif action == 'CREATE' %}
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 login">
+                <div class="border">
+                    <form action="?next={{next}}" role="form" method="post">
+                        <div class="form-group">
+                            {{ form.csrf_token }}
+                            {% for field in form if field.id != 'csrf_token' %}
+                                <div class="form-group">
+                                    {{ field.label }}
+                                    {{ field(class='form-control') }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="pull-right btn btn-primary">Create sprint</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 sticker preview">
+                <div class="border">
+                    <div class="sticker-actions preview">
+                        {% include 'comments.html' %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    {% endif %}
+{% endblock container %}
+
+{% block footer %}
+    {% if action %}
+        <footer>
+        {% if action == 'DETAIL' %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{{ url_for('bp_board.board-detail', sequence=sequence) }}">
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to board #{{ sequence }}
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('bp_sticker.sticker-create-sprint', number=number, sequence=sequence) }}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new sticker
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('bp_sprint.sprint-comments', number=number, sequence=sequence) }}">
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                            Comments {% if sprint.count_comments %}(<strong>{{ sprint.count_comments }}</strong>){% endif %}
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default" href="{{ url_for('bp_board_user.board-detail', sequence=sequence, username=user.username) }}">
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to board #{{ sequence }}
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('bp_sticker_user.sticker-create-sprint', number=number, sequence=sequence, username=user.username) }}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new sticker
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('bp_sprint_user.sprint-comments', number=number, sequence=sequence, username=user.username) }}">
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                            Comments {% if sprint.count_comments %}(<strong>{{ sprint.count_comments }}</strong>){% endif %}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% elif action == 'CREATE' %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{{ url_for('bp_profile.profile-detail') }}">
+                    {% else %}
+                        <a class="btn btn-default" href="{{ url_for('bp_profile_user.profile-detail', username=user.username) }}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to profile page
+                        </a>
+                </div>
+            </div>
+        {% elif action == 'LIST' %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{{ url_for('bp_sprint.sprint-detail', sequence=sequence, number=number) }}">
+                    {% else %}
+                        <a class="btn btn-default" href="{{ url_for('bp_sprint_user.sprint-detail', sequence=sequence, number=number, username=user.username) }}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to sprint #{{ number }}
+                        </a>
+                </div>
+            </div>
+        {% endif %}
+        </footer>
+    {% endif %}
+{% endblock footer %}

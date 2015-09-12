@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block nav %}
+    {{ super() }}
+        <div class="row">
+            <div class="bg-sticker-top col-md-12">
+            </div>
+        </div>
+{% endblock nav %}
+
+{% block container %}
+<div class="row">
+    <div class="col-md-3">
+        {% if action == 'DETAIL' %}
+            <div class="border">
+                <div class="sticker-info">
+                    <ul>
+                        <li><strong>Created by:</strong> {{ sticker.author_display_name|title }}</li>
+                        <li><strong>Created date:</strong> {{ sticker.creation_date }}</li>
+                        <li><strong>Last update date:</strong> {{ sticker.modification_date }}</li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6 sticker preview">
+        <div class="border">
+            {% if sticker_form %}
+                <div class="sticker-content">
+                    <form id="sticker-form" action="?" role="form" method="post">
+                        <div class="form-group">
+                            <h4>Sticker data</h4>
+                            {{ sticker_form.csrf_token }}
+                            {% for field in sticker_form if field.id != 'csrf_token' %}
+                                {% if field.type == 'SubmitField' %}
+                                    {{ field(class='pull-right btn btn-primary') }}
+                                {% elif field.widget.input_type == 'hidden' %}
+                                    {{ field }}
+                                {% else %}
+                                    <div class="form-group">
+                                        {{ field.label }}
+                                        {{ field(class='form-control') }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </form>
+                </div>
+            {% else %}
+                <div class="sticker-header preview">
+                    <h2>{{ sticker.caption }}</h2>
+                    <div class="sticker-label preview">
+                        {% if short_urls_allowed %}
+                            <a class="sticker-number label bg-number preview" href="{{ url_for('bp_sticker.sticker-update', prefix=prefix, sequence=sequence) }}">{{ sticker.number }}</a>
+                        {% else %}
+                            <a class="sticker-number label bg-number preview" href="{{ url_for('bp_sticker_user.sticker-update', prefix=prefix, sequence=sequence, username=user.username) }}">{{ sticker.number }}</a>
+                        {% endif %}
+                        <span class="label {{ sticker.label.css_class }}">{{ sticker.label.status|upper }}</span>
+                    </div>
+                </div>
+                <div class="sticker-content preview">
+                    <div class="sticker-description">
+                        <p>
+                            {{ sticker.description }}
+                        </p>
+                        <a href="#"></a>
+                    </div>
+                </div>
+                <div class="sticker-actions preview">
+                    {% include 'comments.html' %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+{% endblock container %}
+
+{% block footer %}
+    {% if action %}
+    <footer>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                {% if action == 'DETAIL' %}
+                    {% if short_urls_allowed %}
+                        {% if sticker.sprint %}
+                            <a class="btn btn-default" href="{{ url_for('bp_sprint.sprint-detail', sequence=sticker.board_sequence, number=sticker.sprint.number) }}">
+                                <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                                Back to sprint #{{ sticker.sprint.number }}
+                            </a>
+                        {% else %}
+                            <a class="btn btn-default" href="{{ url_for('bp_board.board-detail', sequence=sticker.board_sequence) }}">
+                                <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                                Back to board #{{ sticker.board.sequence }}
+                            </a>
+                        {% endif %}
+                        <a class="btn btn-default" href="{{ url_for('bp_sticker.sticker-update', prefix=prefix, sequence=sequence) }}">
+                            Update
+                            <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
+                        </a>
+                    {% else %}
+                        {% if sticker.sprint %}
+                            <a class="btn btn-default" href="{{ url_for('bp_sprint_user.sprint-detail', sequence=sequence, number=number, username=user.username) }}">
+                                <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                                Back to sprint #{{ sticker.sprint.number }}
+                            </a>
+                        {% else %}
+                            <a class="btn btn-default" href="{{ url_for('bp_board_user.board-detail', sequence=sequence, username=user.username) }}">
+                                <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                                Back to board #{{ sticker.board.sequence }}
+                            </a>
+                        {% endif %}
+                        <a class="btn btn-default" href="{{ url_for('bp_sticker_user.sticker-update', prefix=prefix, sequence=sequence, username=user.username) }}">
+                            Update
+                            <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
+                        </a>
+                    {% endif %}
+                {% elif action == 'UPDATE' %}
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{{ url_for('bp_sticker.sticker-detail', prefix=prefix, sequence=sequence) }}">
+                    {% else %}
+                        <a class="btn btn-default" href="{{ url_for('bp_sticker_user.sticker-detail', prefix=prefix, sequence=sequence, username=user.username) }}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Cancel
+                        </a>
+                    <button form="sticker-form" class="btn btn-default">
+                        Save
+                        <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
+                    </button>
+                {% elif action == 'CREATE' %}
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{{ url_for('bp_board.board-detail', sequence=sequence) }}">
+                    {% else %}
+                        <a class="btn btn-default" href="{{ url_for('bp_board_user.board-detail', sequence=sequence, username=user.username) }}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to board #{{ sequence }}
+                        </a>
+                    <button form="sticker-form" class="btn btn-default">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        Add sticker
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </footer>
+    {% endif %}
+{% endblock footer %}

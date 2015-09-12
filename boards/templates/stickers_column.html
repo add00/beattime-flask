@@ -1,0 +1,52 @@
+<div class="sticker">
+    <div class="border {{ sticker.label.css_class }}">
+        <div class="sticker-header">
+            <h5>
+                {% if short_urls_allowed %}
+                    <a href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence) }}">
+                {% else %}
+                    <a href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence, username=user.username) }}">
+                {% endif %}
+                        {{ sticker.caption }}
+                    </a>
+            </h5>
+            <div class="sticker-label smaller">
+                <span class="label {{ sticker.label.css_class }} ">{{ sticker.label.status }}</span>
+            </div>
+        </div>
+        <div class="sticker-content">
+            <div class="sticker-description">
+                <p>
+                    {{ sticker.description }}
+                </p>
+                <a href="#"></a>
+            </div>
+        </div>
+        <div class="sticker-actions">
+            <div>
+                {% if short_urls_allowed %}
+                    <a class="sticker-number label bg-number" href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence) }}">{{ sticker.number }}</a>
+                {% else %}
+                    <a class="sticker-number label bg-number" href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence, username=user.username) }}">{{ sticker.number }}</a>
+                {% endif %}
+                {% if sticker.count_comments %}
+                    {% if short_urls_allowed %}
+                        <a href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence) }}">
+                    {% else %}
+                        <a href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence, username=user.username) }}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-comment"></span> {{ sticker.count_comments }}
+                        </a>
+                {% else %}
+                    {% if short_urls_allowed %}
+                        <a href="{{ url_for('bp_sticker.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence) }}">
+                    {% else %}
+                        <a href="{{ url_for('bp_sticker_user.sticker-detail', prefix=sticker.prefix, sequence=sticker.sequence, username=user.username) }}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Add a first comment
+                        </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

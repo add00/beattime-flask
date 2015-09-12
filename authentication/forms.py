@@ -2,7 +2,9 @@
 from __future__ import unicode_literals
 
 from flask.ext.wtf import Form
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import (
+    FileField, PasswordField, SelectMultipleField, StringField, SubmitField
+)
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import Required, Length, Email, EqualTo
 
@@ -34,13 +36,14 @@ class RegistrationForm(Form):
     email = EmailField(
         'Email', validators=[Required(), Length(1, 64), Email()]
     )
+    friends = SelectMultipleField('Friends', coerce=int, default=[])
     password = PasswordField('Password', validators=[Required()])
     password_confirm = PasswordField(
         'Confirm password', validators=[
             Required(), EqualTo('password', message=PASSWORD_ERROR_MSG)
         ]
     )
-    avatar = StringField('Avatar')
+    avatar = FileField('Avatar')
     motivation_quote = StringField('Motivation quote')
     submit = SubmitField('Register')
 

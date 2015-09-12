@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from flask import render_template, redirect, request, url_for, flash
+from flask import (
+    current_app, flash, render_template, redirect, request, url_for
+)
 from flask.ext.login import (
     current_user, login_user, logout_user
 )
 from flask.views import MethodView
 
-from authentication import DEFAULT_PAGE
 from authentication.forms import (
     LoginForm, RegistrationForm, ChangePasswordForm, PasswordResetForm,
     PasswordResetDoneForm
@@ -26,7 +27,7 @@ class LoginView(FormMixin, MethodView):
     """
     Login functionality view.
     """
-    form = LoginForm
+    form_class = LoginForm
 
     def _on_success(self, user):
         """
@@ -44,14 +45,15 @@ class LoginView(FormMixin, MethodView):
         )
 
     def post(self):
-        form = self.form()
+        form = self.form_class()
         if form.validate_on_submit():
             username = form.username.data
             user = Profile.query.filter_by(username=username).first()
             if user and user.verify_password(form.password.data):
                 self._on_success(user)
                 return redirect(
-                    request.args.get('next') or url_for(DEFAULT_PAGE)
+                    request.args.get('next') or
+                    url_for(current_app.config['DEFAULT_PAGE'])
                 )
             self._on_error()
         return render_template('auth.html', form=form)
@@ -67,11 +69,12 @@ class LogoutView(LoginRequiredMixin, MethodView):
         return redirect(url_for(LOGIN_PAGE))
 
 
-class RegistrationView(LoginRequiredMixin, FormMixin, MethodView):
+class RegistrationView(FormMixin, MethodView):
     """
     Registration functionality view.
     """
-    form = RegistrationForm
+    form_class = RegistrationForm
+    exclude_fields = ['friends']
 
     def _create_user(self, form):
         """
@@ -89,7 +92,10 @@ class RegistrationView(LoginRequiredMixin, FormMixin, MethodView):
         db.session.commit()
 
     def post(self):
-        form = self.form()
+        """
+        Handles POST.
+        """
+        form = self.get_form()
         if form.validate_on_submit():
             self._create_user(form)
             return redirect(url_for(LOGIN_PAGE))
@@ -100,7 +106,7 @@ class ChangePasswordView(LoginRequiredMixin, FormMixin, MethodView):
     """
     Change Password functionality view.
     """
-    form = ChangePasswordForm
+    form_class = ChangePasswordForm
 
     def _verify_password(self, form):
         """
@@ -138,12 +144,12 @@ class ChangePasswordView(LoginRequiredMixin, FormMixin, MethodView):
         return verify_password and passwords_match
 
     def post(self):
-        form = self.form()
+        form = self.form_class()
         if form.validate_on_submit() and self._valid_password(form):
                 current_user.password = form.new_password.data
                 db.session.add(current_user)
                 flash('Your password was changed.')
-                return redirect(url_for(DEFAULT_PAGE))
+                return redirect(url_for(current_app.config['DEFAULT_PAGE']))
         return render_template("auth.html", form=form)
 
 
@@ -151,7 +157,7 @@ class PasswordResetView(PasswordResetFormMixin, MethodView):
     """
     Password Reset view.
     """
-    form = PasswordResetForm
+    form_class = PasswordResetForm
 
     def _handle_email(self, user):
         """
@@ -170,8 +176,8 @@ class PasswordResetView(PasswordResetFormMixin, MethodView):
 
     def post(self):
         if not current_user.is_anonymous():
-            return redirect(url_for(DEFAULT_PAGE))
-        form = PasswordResetForm()
+            return redirect(url_for(current_app.config['DEFAULT_PAGE']))
+        form = self.form_class()
         if form.validate_on_submit():
             user = Profile.query.filter_by(email=form.email.data).first()
             if user:
@@ -191,10 +197,10 @@ class ResetView(PasswordResetFormMixin, MethodView):
     """
     Password Reset view with token confirmation.
     """
-    form = PasswordResetDoneForm
+    form_class = PasswordResetDoneForm
 
     def post(self, token):
-        form = self.form()
+        form = self.form_class()
         if form.validate_on_submit():
             user = Profile.query.filter_by(email=form.email.data).first()
             if user is None:
@@ -202,7 +208,7 @@ class ResetView(PasswordResetFormMixin, MethodView):
             if user.reset_password(token, form.password.data):
                 flash('Your password has been updated.')
                 return redirect(url_for('bp_authentication.reset-done'))
-            return redirect(url_for(DEFAULT_PAGE))
+            return redirect(url_for(current_app.config['DEFAULT_PAGE']))
         return render_template('auth.html', form=form)
 
 

@@ -3,16 +3,16 @@
 {% block container %}
     {% if action == 'DETAIL' %}
         <div class="jumbotron">
-            {% if username == request.user.username %}
+            {% if user.username == current_user.username %}
                 <h1>Hello {{ profile|title }}!</h1>
             {% else %}
                 <h2>Welcome to {{ profile|title }} profile!</h2>
             {% endif %}
             <div class="avatar">
                 {% if profile.avatar %}
-                    <img src="{{ profile.avatar.url }}" alt="{{ profile|title }} photo">
+                    <img src="{{ url_for('static', filename='beattime/img/avatars/') }}{{ profile.avatar }}" alt="{{ profile|title }} photo">
                 {% else %}
-                    <img src="{{ url_for('static', filename='profiles/profiles/img/avatars/001.jpg') }}" alt="{{ profile|title }} photo">
+                    <img src="{{ url_for('static', filename='beattime/img/avatars/001.jpg') }}" alt="{{ profile|title }} photo">
                 {% endif %}
             </div>
             <blockquote>
@@ -30,9 +30,9 @@
                         <div class="board-thumbnail">
                             <h4> {{ board.title|title }}</h4>
                             {% if short_urls_allowed %}
-                                <a class="circle img-responsive" href="#">#{{ board.sequence }}</a>
+                                <a class="circle img-responsive" href="{{ url_for('bp_board.board-detail', sequence=board.sequence) }}">#{{ board.sequence }}</a>
                             {% else %}
-                                <a class="circle img-responsive" href="#">#{{ board.sequence }}</a>
+                                <a class="circle img-responsive" href="{{ url_for('bp_board_user.board-detail', username=user.username, sequence=board.sequence) }}">#{{ board.sequence }}</a>
                             {% endif %}
                         </div>
                     </div>
@@ -40,7 +40,7 @@
             {% else %}
                 <div class="no-content">
                     <h4>You have not created boards yet. You can do it right now clicking on button below.</h4>
-                    <a class="btn btn-primary btn-lg" href="#" role="button">Add board</a>
+                    <a class="btn btn-primary btn-lg" href="{{ url_for('bp_board.board-create') }}" role="button">Add board</a>
                 </div>
             {% endif %}
         </div>
@@ -49,7 +49,19 @@
             <form id="profile-form" action="?" enctype="multipart/form-data" role="form" method="post">
                 <div class="form-group">
                     <h4>User data</h4>
-                    {{ form }}
+                    {{ form.csrf_token }}
+                    {% for field in form if field.id != 'csrf_token' %}
+                        {% if field.type == 'SubmitField' %}
+                            {{ field(class='pull-right btn btn-primary') }}
+                        {% elif field.widget.input_type == 'hidden' %}
+                            {{ field }}
+                        {% else %}
+                            <div class="form-group">
+                                {{ field.label }}
+                                {{ field(class='form-control') }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </form>
         </div>
@@ -62,33 +74,33 @@
             <div class="col-md-6 col-md-offset-3">
                 {% if action == 'DETAIL' %}
                     {% if short_urls_allowed %}
-                        <a class="btn btn-default" href="#">
+                        <a class="btn btn-default" href="{{ url_for('bp_board.board-create') }}">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                             Create new board
                         </a>
-                        <a class="btn btn-default" href="#">
+                        <a class="btn btn-default" href="{{ url_for('bp_profile.friends-list') }}">
                             <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
                             My Friends
                         </a>
-                        <a class="btn btn-default" href="#">
+                        <a class="btn btn-default" href="{{ url_for('bp_profile.profile-update') }}">
                             <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
                             Update profile
                         </a>
                     {% else %}
-                        <a class="btn btn-default" href="#">
+                        <a class="btn btn-default" href="{{ url_for('bp_board_user.board-create', username=user.username) }}">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                             Create new board
                         </a>
-                        <a class="btn btn-default" href="#">
+                        <a class="btn btn-default" href="{{ url_for('bp_profile_user.friends-list', username=user.username) }}">
                             <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                            {{ username|title }} Friends
+                            {{ user.username|title }} Friends
                         </a>
                     {% endif %}
                 {% elif action == 'UPDATE' %}
                     {% if short_urls_allowed %}
-                        <a class="btn btn-default" href="#">
+                        <a class="btn btn-default" href="{{ url_for('bp_profile.profile-detail') }}">
                     {% else %}
-                        <a class="btn btn-default" href="#">
+                        <a class="btn btn-default" href="{{ url_for('bp_profile_user.profile-detail', username=user.username) }}">
                     {% endif %}
                             <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
                             Cancel
