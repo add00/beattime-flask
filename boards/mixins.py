@@ -8,7 +8,7 @@ from sqlalchemy import and_
 from authentication.mixins import LoginRequiredMixin
 from beattime.config import db
 from beattime.mixins import ViewMixin
-from boards.forms import BoardForm, CommentForm, SprintForm, StickerForm
+from boards.forms import BoardForm, CommentForm, SprintForm,
 from boards.models import (
     Board, Comment, Desk, Sprint, Sticker,
     BOARD_TYPE, SPRINT_TYPE, STICKER_TYPE,
@@ -18,38 +18,11 @@ from boards.models import (
 class CommentMixin(object):
     form_class = CommentForm
 
-    # def get_object(self):
-    #     """
-    #     Return sticker or board, basing on request.
-    #     """
-    #     self.url_name = request.url_rule.endpoint
-    #     if self.url_name == 'bp_profile.sticker-detail':
-    #         return Sticker.query.filter_by(
-    #             board__desk__owner__user=self.user,
-    #             board__prefix=self.kwargs['prefix'],
-    #             sequence=self.kwargs['sequence']
-    #         ).scalar()
-    #     elif self.url_name == 'bp_profile.board-comments':
-    #         desk_id = Desk.query.filter_by(owner_id=self.user.id).scalar().id
-    #         return Board.query.filter_by(
-    #             desk_id=desk_id,
-    #             sequence=request.view_args.get('sequence')
-    #         ).scalar()
-    #     elif self.url_name == 'bp_profile.sprint-comments':
-    #         return Sprint.query.filter_by(
-    #             number=self.kwargs['sprint_number'],
-    #             board__desk__owner__user=self.user,
-    #             board__sequence=self.kwargs['board_sequence']
-    #         ).scalar()
-
     def get_success_url(self):
         """
         After creation, back to a previous page.
         """
         return url_for(request.url_rule.endpoint, **request.view_args)
-        # if request.view_args.get('username'):
-        #     return url_for('boards:{}-username'.format(self.url_name))
-        # return url_for('boards:{}'.format(self.url_name))
 
     def form_valid(self, form):
         """
@@ -136,31 +109,3 @@ class StickerMixin(LoginRequiredMixin, ViewMixin):
             Board.prefix == request.view_args.get('prefix'),
             Sticker.sequence == request.view_args.get('sequence'),
         )).scalar()
-
-
-
-    #     desk_id = Desk.query.filter_by(owner_id=self.user.id).scalar().id
-    #     board_id = Board.query.filter_by(
-    #         desk_id=desk_id,
-    #         sequence=request.view_args.get('sequence')
-    #     ).scalar().id
-    #     return Sprint.query.filter_by(
-    #         board_id=board_id,
-    #         number=request.view_args.get('number')
-    #     ).scalar()
-
-    # def get_object(self):
-    #     """
-    #     Return sticker for given number from requesting user's board.
-    #     Sticker can be editted by its author or owner of desk.
-    #     """
-    #     if not self.user.is_authenticated():
-    #         # Redirect to log in page.
-    #         raise Http404('Access denied')
-
-    #     return Sticker.objects.get(
-    #         board__desk__owner__user=self.user,
-    #         board__prefix=self.kwargs['prefix'],
-    #         sequence=self.kwargs['sequence']
-    #     )
-

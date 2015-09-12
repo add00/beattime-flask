@@ -44,13 +44,7 @@ class StickerForm(Form):
     """
     Form for Sticker model.
     """
-    # years = [(str(y), y) for y in Sprint.query.all()]
     sprint_id = SelectField('Sprint')
-
-    # sprint = QuerySelectField(
-    #     'Sprint', query_factory=Sprint.query.all(), get_pk=lambda a: a.id,
-    #     get_label=lambda a: a.number, validators=[Required()]
-    # )
     caption = StringField('Caption', validators=[Required()])
     description = StringField(
         'Description', widget=TextArea(), validators=[Required()]

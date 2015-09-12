@@ -210,14 +210,6 @@ class Sprint(CommonInfoMixin):
         return Sticker.query.filter_by(
             label_id=label_id, sprint_id=self.id
         ).all()
-    # @property
-    # def blocked(self):
-    #     """
-    #     Returns blocked sprint's stickers.
-    #     """
-    #     return Sticker.query.filter(and_(
-    #         Label.status == BLOCKED, Sprint.id == self.id
-    #     )).all()
 
     def __repr__(self):
         return '<Sprint {} {}>'.format(self.number, self.board_id)

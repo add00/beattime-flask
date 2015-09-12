@@ -8,7 +8,6 @@ from flask import current_app, redirect, request, url_for
 from flask.ext.login import current_user
 from flask.views import View
 from sqlalchemy.exc import IntegrityError
-from werkzeug import secure_filename
 
 from authentication.forms import RegistrationForm
 from beattime.config import db
@@ -403,36 +402,3 @@ class StickerUpdate(StickerMixin, View):
         db.session.add(sticker)
 
         return redirect(self.get_success_url())
-
-# bp_board.add_url_rule(
-#     '/',
-#     view_func=ProfileDetail.as_view(str('profile-detail'))
-# )
-# bp_profile.add_url_rule(
-#     '/',
-#     view_func=ProfileDetail.as_view(str('profile-detail'))
-# )
-# bp_profile.add_url_rule(
-#     '/<username>',
-#     view_func=ProfileDetail.as_view(str('profile-detail-username'))
-# )
-# bp_profile.add_url_rule(
-#     '/update',
-#     view_func=ProfileUpdate.as_view(str('profile-update'))
-# )
-# bp_profile.add_url_rule(
-#     '/board/<sequence>',
-#     view_func=BoardDetail.as_view(str('board-detail'))
-# )
-# bp_board.add_url_rule(
-#     '/board/<sequence>',
-#     view_func=BoardDetail.as_view(str('board-detail'))
-# )
-# bp_profile.add_url_rule(
-#     '/board/<sequence>/comments',
-#     view_func=BoardComments.as_view(str('board-comments'))
-# )
-# bp_profile.add_url_rule(
-#     '/board/new',
-#     view_func=BoardCreate.as_view(str('board-create'))
-# )
