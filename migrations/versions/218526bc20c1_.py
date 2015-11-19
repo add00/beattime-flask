@@ -38,7 +38,7 @@ def upgrade():
     sa.Column('username', sa.String(length=64), nullable=True),
     sa.Column('email', sa.String(length=64), nullable=True),
     sa.Column('passwd', sa.String(length=128), nullable=True),
-    sa.Column('avatar', sa.String(length=256), nullable=False),
+    sa.Column('avatar', sa.String(length=256), nullable=True),
     sa.Column('display_name', sa.String(length=128), nullable=False),
     sa.Column('motivation_quote', sa.String(length=256), nullable=True),
     sa.PrimaryKeyConstraint('id')

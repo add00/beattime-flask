@@ -3,12 +3,11 @@ from __future__ import unicode_literals
 
 from flask import request, url_for
 from flask.ext.login import current_user
-from sqlalchemy import and_
 
 from authentication.mixins import LoginRequiredMixin
 from beattime.config import db
 from beattime.mixins import ViewMixin
-from boards.forms import BoardForm, CommentForm, SprintForm
+from boards.forms import BoardForm, CommentForm, SprintForm, StickerForm
 from boards.models import (
     Board, Comment, Desk, Sprint, Sticker,
 )
@@ -97,14 +96,16 @@ class StickerMixin(LoginRequiredMixin, ViewMixin):
     template_name = 'sticker.html'
     context_object_name = 'sticker'
     object_model = Sticker
+    form_class = StickerForm
 
     def get_object(self):
         """
         Get board basing on url.
         """
-        desk_id = Desk.query.filter_by(owner_id=self.user.id).scalar().id
-        return Sticker.query.filter(and_(
-            Board.desk_id == desk_id,
-            Board.prefix == request.view_args.get('prefix'),
-            Sticker.sequence == request.view_args.get('sequence'),
-        )).scalar()
+        desk = Desk.query.filter_by(owner_id=self.user.id).scalar()
+        board = desk.board_set.filter_by(
+            desk_id=desk.id, prefix=request.view_args.get('prefix')
+        ).scalar()
+        return Sticker.query.filter_by(
+            board_id=board.id, sequence=request.view_args.get('sequence')
+        ).scalar()

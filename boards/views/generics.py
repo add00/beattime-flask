@@ -233,6 +233,7 @@ class StickerDetail(CommentMixin, StickerMixin, View):
 
 class StickerCreate(StickerMixin, View):
     action = CREATE
+    form_name = 'sticker_form'
 
     def get_success_url(self):
         """
@@ -264,7 +265,6 @@ class StickerCreate(StickerMixin, View):
         """
         Return board or sprint.
         """
-
         desk_id = Desk.query.filter_by(owner_id=self.user.id).scalar().id
         board = Board.query.filter_by(
             desk_id=desk_id,
@@ -285,7 +285,7 @@ class StickerCreate(StickerMixin, View):
         obj, obj_type = self.get_object()
 
         board_id = obj.id if obj_type == BOARD_TYPE else obj.board_id
-        form = super(StickerMixin, self).get_form()
+        form = super(StickerCreate, self).get_form()
         if request.view_args.get('number'):
             del form['sprint_id']
         else:

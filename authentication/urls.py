@@ -11,7 +11,7 @@ authentication_rules = [
     (
         views.PasswordResetDoneView,
         '/password_reset/done',
-        'password_reset/done'
+        'password-reset-done'
     ),
     (views.ResetView, '/reset/<token>', 'reset'),
     (views.ResetDoneView, '/reset/done', 'reset-done'),
