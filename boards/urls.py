@@ -44,3 +44,8 @@ sticker_rules = [
 ]
 register_patterns(bp_sticker, sticker_rules)
 register_patterns(bp_sticker_user, sticker_rules)
+
+api_rules = [
+    (views.StickerAPI, '/stickers/', 'api-stickers'),
+]
+register_patterns(bp_profile, api_rules)

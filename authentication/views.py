@@ -107,14 +107,30 @@ class RegistrationView(FormMixin, MethodView):
         db.session.add(desk)
         db.session.commit()
 
+    def _validate_user(self, form):
+        """
+        Validates if user already exists.
+        """
+        is_valid = True
+        if Profile.query.filter_by(username=form.username.data).scalar():
+            form.username.errors.append('Username already taken')
+            is_valid = False
+        if Profile.query.filter_by(email=form.email.data).scalar():
+            form.email.errors.append('Email already taken')
+            is_valid = False
+
+        return form, is_valid
+
     def post(self):
         """
         Handles POST.
         """
         form = self.get_form()
         if form.validate_on_submit():
-            self._create_user(form)
-            return redirect(url_for(LOGIN_PAGE))
+            form, is_valid = self._validate_user(form)
+            if is_valid:
+                self._create_user(form)
+                return redirect(url_for(LOGIN_PAGE))
         return render_template('auth.html', form=form)
 
 

@@ -49,5 +49,15 @@ def page_not_found(error):
     return render_template('404.html'), 404
 
 
+@manager.command
+def test():
+    """
+    Test command.
+    """
+    import unittest
+    tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner(verbosity=2).run(tests)
+
+
 if __name__ == '__main__':
     manager.run()

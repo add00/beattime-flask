@@ -52,7 +52,7 @@ class Profile(UserMixin, PKMixin):
     email = db.Column(db.String(64), unique=True, index=True)
     passwd = db.Column(db.String(128))
 
-    avatar = Column(db.String(256))
+    avatar = Column(db.String(256), nullable=True)
     display_name = Column(db.String(128))
     # @desc: self and a ManyToMany relation.
     friends = db.relationship(
